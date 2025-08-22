@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FinVoice Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f8fd;
+      color: #333;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    /* ---------------- NAVBAR ---------------- */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(90deg, #002f8e, #005eff);
+      padding: 1rem 2rem;
+      color: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .navbar .right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .profile {
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .profile img {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+    }
+    .profile span {
+      font-weight: bold;
+    }
+    .dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 45px;
+      background: white;
+      color: #333;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      overflow: hidden;
+      min-width: 150px;
+    }
+    .dropdown p {
+      margin: 0;
+      padding: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .dropdown p:hover {
+      background: #f0f0f0;
+    }
+    .profile.active .dropdown {
+      display: block;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 1.5rem;
+      margin: 1rem 2rem;
+      border-radius: 12px;
+      color: rgb(32, 40, 77);
+      animation: fadeInDown 0.6s ease;
+    }
+    h2 { font-size: 35px; }
+
+    /* Dashboard Grid */
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 2rem;
+      animation: fadeInUp 0.6s ease;
+    }
+
+    /* Feature cards */
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 94, 255, 0.3);
+    }
+    .card i {
+      font-size: 2rem;
+      color: #005eff;
+      margin-bottom: 1rem;
+    }
+    .card h3 {
+      margin: 0.5rem 0;
+      color: #002f8e;
+    }
+    .card p {
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    /* Animations */
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ---------------- RESPONSIVE ---------------- */
+    @media (max-width: 768px) {
+      .navbar { padding: 0.8rem 1rem; }
+      .navbar .logo { font-size: 1.2rem; }
+      #input-container { width: 90%; padding: 10px 12px; }
+      #user-input { font-size: 0.95rem; }
+      button { padding: 8px 14px; font-size: 0.9rem; }
+    }
+
+    @media (max-width: 480px) {
+      .navbar .logo { font-size: 1.2rem; }
+      .profile span { display: none; }
+      .hero h2 { font-size: 22px; }
+      .hero p { font-size: 14px; }
+      .card { padding: 1rem; }
+      .card i { font-size: 1.5rem; }
+      .card h3 { font-size: 1.1rem; }
+      .card p { font-size: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="logo">FinVoice</div>
+    <div class="right">
+      <div class="profile" onclick="toggleProfile()">
+        <img src="https://i.pravatar.cc/40" alt="profile">
+        <span>Rishi ▼</span>
+        <div class="dropdown">
+          <p>My Account</p>
+          <p>Settings</p>
+          <p onclick="window.location.href='login.html'">Logout</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <div class="hero">
+    <h2>Welcome back, Rishi</h2>
+    <p>Your financial health at a glance</p>
+  </div>
+
+  <!-- Dashboard Features -->
+  <div class="dashboard">
+    <a class="card" href="./templates/index.html">
+      <i class="fa fa-wallet"></i>
+      <h3>Expenses Tracker</h3>
+      <p>Track and manage your daily expenses with ease.</p>
+    </a>
+    <a class="card" href="analysis.html">
+      <i class="fa fa-chart-pie"></i>
+      <h3>Spending Analysis</h3>
+      <p>Analyze your spending patterns with smart insights.</p>
+    </a>
+    <a class="card" href="investment.html">
+      <i class="fa fa-lightbulb"></i>
+      <h3>Investment Suggestions</h3>
+      <p>Get AI-powered investment recommendations.</p>
+    </a>
+    <a class="card" href="./templates/chatbot.html">
+      <i class="fa fa-robot"></i>
+      <h3>Chatbot</h3>
+      <p>Ask FinVoice AI assistant for financial guidance.</p>
+    </a>
+  </div>
+
+  <script>
+    // Toggle Profile dropdown
+    function toggleProfile() {
+      document.querySelector(".profile").classList.toggle("active");
+    }
+  </script>
+</body>
+</html>

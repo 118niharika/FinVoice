@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FinVoice - Voice Expense Tracker</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f0f6ff; margin: 0; padding: 0; }
+    header { background: #0044cc; color: white; padding: 1rem; text-align: center; }
+    .container { max-width: 800px; margin: 20px auto; padding: 20px; background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    button { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; }
+    #micBtn { margin-left: 320px; background: #007bff; color: white; }
+    #micBtn.listening { background: red; }
+    #status { margin-left: 295px; }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+    th { background: #007bff; color: white; }
+    tr:nth-child(even) { background: #f9f9f9; }
+    tr:hover { background: #eef; }
+
+    .insights { margin-top: 20px; padding: 10px; background: #f9f9f9; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🎤 FinVoice - Expense Tracker</h1>
+  </header>
+  <div class="container">
+    <button id="micBtn">🎤 Speak Expense</button>
+    <p id="status">Click on mic to add expenses</p>
+    
+    <h2>Recent Expenses</h2>
+    <table id="expenseTable">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Amount (₹)</th>
+          <th>Category</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody id="expenseList"></tbody>
+    </table>
+
+    <div class="insights">
+      <h3>💡 Insights</h3>
+      <ul id="insightList"></ul>
+      <p id="sip"></p>
+    </div>
+  </div>
+
+  <script>
+    const micBtn = document.getElementById("micBtn");
+    const status = document.getElementById("status");
+    const expenseList = document.getElementById("expenseList");
+    const insightList = document.getElementById("insightList");
+    const sipBox = document.getElementById("sip");
+
+    async function fetchExpenses() {
+      let res = await fetch("/expenses");
+      let data = await res.json();
+
+      // Show expenses in table
+      expenseList.innerHTML = "";
+      data.expenses.forEach(e => {
+        let row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${e.ts}</td>
+          <td>₹${e.amount}</td>
+          <td>${e.category}</td>
+          <td>${e.description}</td>
+        `;
+        expenseList.appendChild(row);
+      });
+
+      // Show insights
+      insightList.innerHTML = "";
+      data.insights.suggestions.forEach(s => {
+        let li = document.createElement("li");
+        li.textContent = s;
+        insightList.appendChild(li);
+      });
+
+      let sip = data.insights.sipProposal;
+    //sipBox.textContent = If you invest ₹${sip.monthly}/month in SIP, in ${sip.horizonMonths} months you may have ~₹${sip.projectedValue};
+    }
+
+    // Voice recognition setup
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-IN"; 
+    recognition.interimResults = false;
+
+    micBtn.addEventListener("click", () => {
+      recognition.start();
+      micBtn.classList.add("listening");
+      status.textContent = "Listening...";
+    });
+
+    recognition.onresult = async (event) => {
+      micBtn.classList.remove("listening");
+      const transcript = event.results[0][0].transcript;
+      status.textContent = "You said: " + transcript;
+
+      // Extract amount (number) from speech
+      let amountMatch = transcript.match(/\d+/);
+      let amount = amountMatch ? parseFloat(amountMatch[0]) : 0;
+
+      if (amount > 0) {
+        await fetch("/add_expense", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ description: transcript, amount: amount })
+        });
+        fetchExpenses();
+      } else {
+        alert("Couldn't detect amount, please try again.");
+      }
+    };
+
+    recognition.onerror = () => {
+      micBtn.classList.remove("listening");
+      status.textContent = "Error in recognition, try again.";
+    };
+
+    fetchExpenses();
+  </script>
+</body>
+</html>

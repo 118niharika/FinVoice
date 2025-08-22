@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up</title>
+  <link rel="stylesheet" href="auth.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-card">
+      <h2 class="title">Sign Up</h2>
+      <form id="signupForm">
+        <div class="input-group">
+          <i class="fa fa-user icon"></i>
+          <input type="text" id="name" placeholder="Name" required>
+        </div>
+        <div class="input-group">
+          <i class="fa fa-cake-candles icon"></i>
+          <input type="number" id="age" placeholder="Age" required>
+        </div>
+        <div class="input-group">
+          <i class="fa fa-briefcase icon"></i>
+          <input type="text" id="work" placeholder="Work" required>
+        </div>
+        <div class="input-group">
+          <i class="fa fa-money-bill icon"></i>
+          <input type="number" id="salary" placeholder="Salary" required>
+        </div>
+        <div class="input-group">
+          <i class="fa fa-chart-line icon"></i>
+          <input type="text" id="investment" placeholder="Preferred Investment Type" required>
+        </div>
+        <div class="input-group">
+          <i class="fa fa-lock icon"></i>
+          <input type="password" id="password" placeholder="Password" required>
+        </div>
+        <button type="submit" class="auth-btn">Sign Up →</button>
+        <p class="switch-text">
+          Already have an account? <span onclick="window.location.href='login.html'">Login</span>
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("signupForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const user = {
+        name: document.getElementById("name").value,
+        age: document.getElementById("age").value,
+        work: document.getElementById("work").value,
+        salary: document.getElementById("salary").value,
+        investment: document.getElementById("investment").value,
+        password: document.getElementById("password").value,
+      };
+
+      localStorage.setItem("userProfile", JSON.stringify(user));
+      alert("Signup Successful ✅");
+      window.location.href = "dashboard.html"; // redirect
+    });
+  </script>
+</body>
+</html>

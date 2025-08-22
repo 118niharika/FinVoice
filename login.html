@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="auth.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-card">
+      <h2 class="title">Login</h2>
+      <form id="loginForm">
+        <div class="input-group">
+          <i class="fa fa-user icon"></i>
+          <input type="text" id="loginName" placeholder="Name" required>
+        </div>
+        <div class="input-group">
+          <i class="fa fa-lock icon"></i>
+          <input type="password" id="loginPassword" placeholder="Password" required>
+        </div>
+        <button type="submit" class="auth-btn">Login →</button>
+        <p class="switch-text">
+          Don’t have an account? <span onclick="window.location.href='signup.html'">Sign Up</span>
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById("loginName").value;
+      const password = document.getElementById("loginPassword").value;
+
+      const storedUser = JSON.parse(localStorage.getItem("userProfile"));
+
+      if (storedUser && storedUser.name === name && storedUser.password === password) {
+        alert("Login Successful ✅");
+        window.location.href = "dashboard.html"; // redirect
+      } else {
+        alert("Invalid credentials ❌ Please try again.");
+      }
+    });
+  </script>
+</body>
+</html>

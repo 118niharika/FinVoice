@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FinVoice Chatbot</title>
+  <style>
+    :root {
+      --bg-color: #f7f7f8;
+      --chat-bg: #ffffff;
+      --user-bubble: #0078ff;
+      --bot-bubble: #e4e6eb;
+      --text-color: #111;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--bg-color);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* ---------------- NAVBAR ---------------- */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(90deg, #002f8e, #005eff);
+      padding: 1rem 2rem;
+      color: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .navbar .right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .profile {
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .profile img {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+    }
+    .profile span {
+      font-weight: bold;
+    }
+    .dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 45px;
+      background: white;
+      color: #333;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      overflow: hidden;
+      min-width: 150px;
+    }
+    .dropdown p {
+      margin: 0;
+      padding: 10px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .dropdown p:hover {
+      background: #f0f0f0;
+    }
+    .profile.active .dropdown {
+      display: block;
+    }
+
+    /* ---------------- CHAT ---------------- */
+    #chat-container {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: var(--chat-bg);
+    }
+
+    .message {
+      max-width: 80%;
+      padding: 12px 14px;
+      border-radius: 14px;
+      line-height: 1.5;
+      font-size: 0.95rem;
+      white-space: pre-line;
+      word-wrap: break-word;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+      animation: fadeIn 0.25s ease-in;
+    }
+
+    .user {
+      align-self: flex-end;
+      background: var(--user-bubble);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+
+    .assistant {
+      align-self: flex-start;
+      background: var(--bot-bubble);
+      color: var(--text-color);
+      border-bottom-left-radius: 4px;
+    }
+
+    /* ---------------- INPUT ---------------- */
+    #input-container {
+      display: flex;
+      align-items: center;
+      width: 60%;
+      max-width: 700px;
+      margin: 20px auto;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 999px;
+      padding: 12px 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      transition: box-shadow 0.2s ease;
+    }
+
+    #input-container:focus-within {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      border-color: #aaa;
+    }
+
+    #user-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      padding: 8px 12px;
+      background: transparent;
+      color: #111;
+    }
+
+    #user-input::placeholder {
+      color: #999;
+      font-weight: 400;
+    }
+
+    button {
+      background: #0078ff;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: #005fcc;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ---------------- RESPONSIVE ---------------- */
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 0.8rem 1rem;
+      }
+      .navbar .logo {
+        font-size: 1.2rem;
+      }
+      #input-container {
+        width: 90%;
+        padding: 10px 12px;
+      }
+      #user-input {
+        font-size: 0.95rem;
+      }
+      button {
+        padding: 8px 14px;
+        font-size: 0.9rem;
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="logo">FinVoice</div>
+    <div class="right">
+      <button onclick="toggleTheme()" style="background:none;border:none;color:white;font-size:1.2rem;cursor:pointer;">🌙</button>
+      <div class="profile" onclick="toggleProfile()">
+        <img src="https://i.pravatar.cc/40" alt="profile">
+        <span>Rishi ▼</span>
+        <div class="dropdown">
+          <p>My Account</p>
+          <p>Settings</p>
+          <p onclick="logout()">Logout</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Container -->
+  <div id="chat-container"></div>
+
+  <!-- Input -->
+  <div id="input-container">
+    <input id="user-input" type="text" placeholder="Message FinVoice..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+
+  <script>
+    const chatContainer = document.getElementById("chat-container");
+    const userInput = document.getElementById("user-input");
+
+    const expenses = []; // Fake DB
+
+    const GEMINI_API_KEY = "AIzaSyBwaNGexsCQIf_3Swav2DRLh7YoSO1rvuo"; // replace
+
+    async function call_gemini_api(user_input, conversation=[]) {
+      const templates = [
+        "Answer concisely and helpfully:",
+        "Explain like a professional assistant:",
+        "Provide detailed advice:"
+      ];
+      const template = templates[Math.floor(Math.random() * templates.length)];
+      const context = conversation.map(m => `${m.role}: ${m.content}`).join("\n");
+      const final_prompt = `${template}\n${context}\nUser: ${user_input}\nAssistant:`;
+
+      try {
+        const response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ contents: [{ parts: [{ text: final_prompt }] }] })
+          }
+        );
+        const data = await response.json();
+        return data.candidates?.[0]?.content?.parts?.[0]?.text || "⚠️ No valid response.";
+      } catch (err) {
+        return "API Error: " + err.message;
+      }
+    }
+
+    function add_expense(user_input) {
+      const match = user_input.match(/(\d+(\.\d+)?)/);
+      if (!match) return "I couldn't find an amount. Try 'spent 250 on coffee'.";
+      const amount = parseFloat(match[1]);
+      const desc = user_input.replace(match[0], "").replace("spent", "").trim();
+      const ts = new Date().toISOString();
+      const cat = "General";
+
+      expenses.push({ ts, description: desc, amount, category: cat });
+      return `✅ Added: *${desc}* – ₹${amount} (Category: ${cat})`;
+    }
+
+    function get_advice() {
+      if (expenses.length === 0) return "No expenses yet. Add some first!";
+      let total = expenses.reduce((s, e) => s + e.amount, 0);
+      let cats = {};
+      expenses.forEach(e => cats[e.category] = (cats[e.category] || 0) + e.amount);
+
+      let advice = [`💰 Total spent: ₹${total.toFixed(2)}`, "📊 Spending by category:"];
+      for (let [c, amt] of Object.entries(cats)) {
+        advice.push(`- ${c}: ₹${amt.toFixed(2)}`);
+      }
+      let highest = Object.keys(cats).reduce((a,b) => cats[a] > cats[b] ? a : b);
+      advice.push(`⚠ Highest spending category: ${highest}`);
+      advice.push("Try to save in this category next month!");
+      return advice.join("\n\n");
+    }
+
+    function detect_intent(text) {
+      text = text.toLowerCase();
+      if (text.includes("spent") || text.includes("add") || text.includes("buy")) return "add_expense";
+      if (text.includes("advice") || text.includes("insight") || text.includes("suggestion")) return "get_advice";
+      return "general";
+    }
+
+    const messages = [];
+
+    function appendMessage(role, content) {
+      const msg = document.createElement("div");
+      msg.className = `message ${role}`;
+      msg.innerHTML = content;
+      chatContainer.appendChild(msg);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+      messages.push({ role, content });
+    }
+
+    async function sendMessage() {
+      const text = userInput.value.trim();
+      if (!text) return;
+      appendMessage("user", text);
+      userInput.value = "";
+
+      let botReply = "";
+      const intent = detect_intent(text);
+
+      if (intent === "add_expense") botReply = add_expense(text);
+      else if (intent === "get_advice") botReply = get_advice();
+      else {
+        const ctx = messages.slice(-5);
+        botReply = await call_gemini_api(text, ctx);
+      }
+      appendMessage("assistant", botReply);
+    }
+
+    userInput.addEventListener("keypress", e => {
+      if (e.key === "Enter") sendMessage();
+    });
+
+    // Navbar interactions
+    function toggleProfile() {
+      document.querySelector(".profile").classList.toggle("active");
+    }
+    function logout() {
+      alert("Logged out!");
+    }
+    function toggleTheme() {
+      document.body.classList.toggle("dark");
+    }
+  </script>
+</body>
+</html>
