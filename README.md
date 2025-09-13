@@ -37,24 +37,24 @@ FinVoice is a web application for generating / sharing voice notes (or financial
 
 ## Installation & Setup (Local)
 
-1. # Clone the repo:  
+1. Clone the repo:  
    ```bash
    git clone https://github.com/Niharika006/FinVoice.git
    cd FinVoice
 
-2. # If there are dependencies (e.g. JS packages, server), install them:
+2. If there are dependencies (e.g. JS packages, server), install them:
    ```bash
    npm install
-  # or
+   or
    pip install -r requirements.txt
 
-3. # Run locally:
-   # If simple static site:
+3. Run locally:
+   If simple static site:
    open index.html
-   # Or if there is a dev server:
+   Or if there is a dev server:
    npm start
 
-4. # Access in browser at http://localhost:xxxx (whatever port your app uses)
+4. Access in browser at http://localhost:xxxx (whatever port your app uses)
 
 
 
